@@ -11,7 +11,7 @@ const StatisticsTableRow = ({ label, value }) => (
   </tr>
 );
 
-const Statistics = (props) => {
+const StatisticsTable = (props) => {
   if (props.total <= 0) {
     return <div>No feedback given</div>;
   }
@@ -46,7 +46,7 @@ const App = () => {
       <Button text={"bad"} handleClick={() => setBad(bad + 1)} />
 
       <Header text="statistics" />
-      <Statistics
+      <StatisticsTable
         good={good}
         neutral={neutral}
         bad={bad}
