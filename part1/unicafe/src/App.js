@@ -4,10 +4,11 @@ const Header = ({ text }) => <h1>{text}</h1>;
 const Button = ({ handleClick, text }) => (
   <button onClick={handleClick}>{text}</button>
 );
-const StatisticsLine = ({ label, value }) => (
-  <div>
-    {label} {value}
-  </div>
+const StatisticsTableRow = ({ label, value }) => (
+  <tr>
+    <td>{label}</td>
+    <td>{value}</td>
+  </tr>
 );
 
 const Statistics = (props) => {
@@ -15,14 +16,16 @@ const Statistics = (props) => {
     return <div>No feedback given</div>;
   }
   return (
-    <div>
-      <StatisticsLine label="good" value={props.good} />
-      <StatisticsLine label="neutral" value={props.neutral} />
-      <StatisticsLine label="bad" value={props.bad} />
-      <StatisticsLine label="all" value={props.total} />
-      <StatisticsLine label="average" value={props.average} />
-      <StatisticsLine label="positive" value={props.positive} />
-    </div>
+    <table>
+      <tbody>
+        <StatisticsTableRow label="good" value={props.good} />
+        <StatisticsTableRow label="neutral" value={props.neutral} />
+        <StatisticsTableRow label="bad" value={props.bad} />
+        <StatisticsTableRow label="all" value={props.total} />
+        <StatisticsTableRow label="average" value={props.average} />
+        <StatisticsTableRow label="positive" value={props.positive} />
+      </tbody>
+    </table>
   );
 };
 
