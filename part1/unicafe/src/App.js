@@ -11,21 +11,17 @@ const StatisticsLine = ({ label, value }) => (
 );
 
 const Statistics = (props) => {
+  if (props.total <= 0) {
+    return <div>No feedback given</div>;
+  }
   return (
     <div>
-      <Header text="statistics" />
-      {props.total <= 0 ? (
-        <div>No feedback given</div>
-      ) : (
-        <div>
-          <StatisticsLine label="good" value={props.good} />
-          <StatisticsLine label="neutral" value={props.neutral} />
-          <StatisticsLine label="bad" value={props.bad} />
-          <StatisticsLine label="all" value={props.total} />
-          <StatisticsLine label="average" value={props.average} />
-          <StatisticsLine label="positive" value={props.positive} />
-        </div>
-      )}
+      <StatisticsLine label="good" value={props.good} />
+      <StatisticsLine label="neutral" value={props.neutral} />
+      <StatisticsLine label="bad" value={props.bad} />
+      <StatisticsLine label="all" value={props.total} />
+      <StatisticsLine label="average" value={props.average} />
+      <StatisticsLine label="positive" value={props.positive} />
     </div>
   );
 };
@@ -46,6 +42,7 @@ const App = () => {
       <Button text={"neutral"} handleClick={() => setNeutral(neutral + 1)} />
       <Button text={"bad"} handleClick={() => setBad(bad + 1)} />
 
+      <Header text="statistics" />
       <Statistics
         good={good}
         neutral={neutral}
