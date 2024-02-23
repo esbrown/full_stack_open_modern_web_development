@@ -1,32 +1,10 @@
 import { useState } from "react"
-
-const Person = ({ person }) => (
-  <p key={person.id}>
-    {person.name} {person.number}
-  </p>
-)
-
-const Numbers = ({ people, filter }) => {
-  const filterCaseInsensitive = filter.toLowerCase()
-  const filtered = people.filter((item) =>
-    item.name.toLowerCase().includes(filterCaseInsensitive)
-  )
-  return (
-    <div>
-      {filtered.map((person) => (
-        <Person key={person.id} person={person} />
-      ))}
-    </div>
-  )
-}
+import Persons from "./components/Persons"
+import Filter from "./components/Filter"
+import PersonForm from "./components/PersonForm"
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456", id: 1 },
-    { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", number: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [filtered, setFilter] = useState("")
@@ -58,26 +36,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with{" "}
-        <input value={filtered} onChange={handleFilterChange} />
-      </div>
-      <h2>add a new</h2>
-      <form>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit" onClick={handleSubmit}>
-            add
-          </button>
-        </div>
-      </form>
+      <Filter filterText={filtered} handleFilterChange={handleFilterChange} />
+      <h2>Add a new</h2>
+      <PersonForm
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+        handleSubmit={handleSubmit}
+      />
       <h2>Numbers</h2>
-      <Numbers people={persons} filter={filtered} />
+      <Persons people={persons} filter={filtered} />
     </div>
   )
 }
