@@ -1,6 +1,10 @@
 import { useState } from "react"
 
-const Person = ({ person }) => <p key={person.name}>{person.name}</p>
+const Person = ({ person }) => (
+  <p key={person.name}>
+    {person.name} {person.number}
+  </p>
+)
 
 const Numbers = ({ people }) => {
   return (
@@ -13,7 +17,9 @@ const Numbers = ({ people }) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas" }])
+  const [persons, setPersons] = useState([
+    { name: "Arto Hellas", number: "12345678" },
+  ])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
 
