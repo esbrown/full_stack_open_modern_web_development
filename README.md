@@ -12,3 +12,7 @@
 - [1.1 - 1.5: Course Info](./part1/courseinfo)
 - [1.6-1.11\*: Unicafe](./part1/unicafe)
 - [1.12\*-1.14\*: Anecdotes](./part1/anecdotes)
+
+## [Part 2](./part2/)
+
+- [2.1 - 2.5: Course Info 2](./part2/courseinfo)
