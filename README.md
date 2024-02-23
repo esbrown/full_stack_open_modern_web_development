@@ -16,3 +16,4 @@
 ## [Part 2](./part2/)
 
 - [2.1 - 2.5: Course Info 2](./part2/courseinfo)
+- [2.6 - 2.10: Phonebook](./part2/phonebook)
