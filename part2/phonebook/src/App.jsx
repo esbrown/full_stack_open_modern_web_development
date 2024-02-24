@@ -3,14 +3,16 @@ import Persons from "./components/Persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import personsService from "./services/persons"
+import SuccessMessage from "./components/SuccessMessage"
 
-// 5.5 hours so far
+// 6 hours so far
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
   const [newNumber, setNewNumber] = useState("")
   const [filtered, setFilter] = useState("")
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personsService.getAll().then((persons) => {
@@ -26,6 +28,13 @@ const App = () => {
   }
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
+  }
+
+  const updateSuccessMessage = (message) => {
+    setSuccessMessage(message)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
   }
 
   const handleSubmit = (event) => {
@@ -48,6 +57,9 @@ const App = () => {
             setPersons(persons.map((p) => (p.id !== id ? p : response)))
             setNewName("")
             setNewNumber("")
+            updateSuccessMessage(
+              `Updated the number for ${response.name} to ${response.number}`
+            )
           })
       }
     } else {
@@ -59,6 +71,7 @@ const App = () => {
         setPersons(persons.concat(updatedPerson))
         setNewName("")
         setNewNumber("")
+        updateSuccessMessage(`Added ${updatedPerson.name} to Phonebook`)
       })
     }
   }
@@ -77,6 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <SuccessMessage message={successMessage} />
       <Filter filterText={filtered} handleFilterChange={handleFilterChange} />
       <h2>Add a new</h2>
       <PersonForm
