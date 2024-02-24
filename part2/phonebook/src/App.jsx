@@ -14,8 +14,8 @@ const App = () => {
   const [filtered, setFilter] = useState("")
 
   useEffect(() => {
-    personsService.getAll().then((response) => {
-      setPersons(response.data)
+    personsService.getAll().then((persons) => {
+      setPersons(persons)
     })
   }, [])
 
@@ -37,13 +37,14 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
-      personsService.create(newPerson).then((response) => {
-        setPersons(persons.concat(response.data))
+      personsService.create(newPerson).then((updatedPerson) => {
+        setPersons(persons.concat(updatedPerson))
         setNewName("")
         setNewNumber("")
       })
     }
   }
+
   return (
     <div>
       <h2>Phonebook</h2>
