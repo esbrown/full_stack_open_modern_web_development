@@ -2,10 +2,9 @@ import { useEffect, useState } from "react"
 import Persons from "./components/Persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
-import axios from "axios"
 import personsService from "./services/persons"
 
-// 5 hours so far
+// 5.5 hours so far
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -45,6 +44,17 @@ const App = () => {
     }
   }
 
+  const handleDelete = (id) => {
+    const person = persons.find((p) => p.id === id)
+    if (window.confirm(`Do you really want to delete ${person.name}?`)) {
+      personsService
+        .remove(person.id)
+        .then((deleted) =>
+          setPersons(persons.filter((n) => n.id !== deleted.id))
+        )
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -58,7 +68,7 @@ const App = () => {
         handleSubmit={handleSubmit}
       />
       <h2>Numbers</h2>
-      <Persons people={persons} filter={filtered} />
+      <Persons people={persons} filter={filtered} handleDelete={handleDelete} />
     </div>
   )
 }
