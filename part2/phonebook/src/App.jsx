@@ -3,6 +3,7 @@ import Persons from "./components/Persons"
 import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import axios from "axios"
+import personsService from "./services/persons"
 
 // 5 hours so far
 
@@ -13,7 +14,7 @@ const App = () => {
   const [filtered, setFilter] = useState("")
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personsService.getAll().then((response) => {
       setPersons(response.data)
     })
   }, [])
@@ -36,13 +37,11 @@ const App = () => {
         name: newName,
         number: newNumber,
       }
-      axios
-        .post("http://localhost:3001/persons", newPerson)
-        .then((response) => {
-          setPersons(persons.concat(response.data))
-          setNewName("")
-          setNewNumber("")
-        })
+      personsService.create(newPerson).then((response) => {
+        setPersons(persons.concat(response.data))
+        setNewName("")
+        setNewNumber("")
+      })
     }
   }
   return (
