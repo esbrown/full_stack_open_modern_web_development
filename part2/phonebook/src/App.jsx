@@ -4,8 +4,9 @@ import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import personsService from "./services/persons"
 import SuccessMessage from "./components/SuccessMessage"
+import ErrorMessage from "./components/ErrorMessage"
 
-// 6 hours so far
+// 6.5 hours so far
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -13,6 +14,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("")
   const [filtered, setFilter] = useState("")
   const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personsService.getAll().then((persons) => {
@@ -34,6 +36,13 @@ const App = () => {
     setSuccessMessage(message)
     setTimeout(() => {
       setSuccessMessage(null)
+    }, 5000)
+  }
+
+  const updateErrorMessage = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {
+      setErrorMessage(null)
     }, 5000)
   }
 
@@ -59,6 +68,11 @@ const App = () => {
             setNewNumber("")
             updateSuccessMessage(
               `Updated the number for ${response.name} to ${response.number}`
+            )
+          })
+          .catch(() => {
+            updateErrorMessage(
+              `Information of ${existingPerson.name} has already been removed from the server`
             )
           })
       }
@@ -91,6 +105,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <SuccessMessage message={successMessage} />
+      <ErrorMessage message={errorMessage} />
       <Filter filterText={filtered} handleFilterChange={handleFilterChange} />
       <h2>Add a new</h2>
       <PersonForm
