@@ -27,10 +27,29 @@ const App = () => {
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
   }
+
   const handleSubmit = (event) => {
     event.preventDefault()
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`)
+    const existingPerson = persons.find((person) => person.name === newName)
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${existingPerson.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const updatedPerson = {
+          ...existingPerson,
+          number: newNumber,
+        }
+        const id = updatedPerson.id
+        personsService
+          .update(updatedPerson.id, updatedPerson)
+          .then((response) => {
+            setPersons(persons.map((p) => (p.id !== id ? p : response)))
+            setNewName("")
+            setNewNumber("")
+          })
+      }
     } else {
       const newPerson = {
         name: newName,
