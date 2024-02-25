@@ -17,7 +17,7 @@ const CountryInfo = ({ country }) => {
   )
 }
 
-const CountryList = ({ allCountries, inputText }) => {
+const CountryList = ({ allCountries, inputText, onShowCountryInfo }) => {
   const matching = allCountries.filter((it) =>
     it.name.common.toLowerCase().includes(inputText)
   )
@@ -31,7 +31,10 @@ const CountryList = ({ allCountries, inputText }) => {
     return <p>Too many matches, specify another filter</p>
   } else {
     return matching.map((it) => (
-      <div key={it.name.common}>{it.name.common}</div>
+      <div key={it.name.common}>
+        {it.name.common}{" "}
+        <button onClick={() => onShowCountryInfo(it)}>show</button>
+      </div>
     ))
   }
 }

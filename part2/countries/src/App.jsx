@@ -15,6 +15,10 @@ const App = () => {
     })
   }, [])
 
+  const onShowCountryInfo = (country) => {
+    setInput(country.name.common.toLowerCase())
+  }
+
   const onInputChange = (inputText) => {
     setInput(inputText.toLowerCase())
   }
@@ -22,7 +26,11 @@ const App = () => {
   return (
     <div>
       <CountryInput inputText={input} handleInputChange={onInputChange} />
-      <CountryList allCountries={allCountries} inputText={input} />
+      <CountryList
+        allCountries={allCountries}
+        inputText={input}
+        onShowCountryInfo={onShowCountryInfo}
+      />
     </div>
   )
 }
