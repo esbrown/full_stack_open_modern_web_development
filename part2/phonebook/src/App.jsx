@@ -6,8 +6,6 @@ import personsService from "./services/persons"
 import SuccessMessage from "./components/SuccessMessage"
 import ErrorMessage from "./components/ErrorMessage"
 
-// 6.5 hours so far
-
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState("")
