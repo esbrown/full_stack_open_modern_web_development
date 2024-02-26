@@ -18,3 +18,7 @@
 - [2.1 - 2.5: Course Info 2](./part2/courseinfo)
 - [2.6 - 2.17: Phonebook](./part2/phonebook)
 - [2.18 - 2.20: Countries](./part2/countries)
+
+## [Part 3](./part3/)
+
+- [3.9 - 3.11](./part3)
