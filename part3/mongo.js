@@ -1,8 +1,8 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose')
 
 const numArgs = process.argv.length
 if (numArgs < 3) {
-  console.log("give password as argument")
+  console.log('give password as argument')
   process.exit(1)
 }
 
@@ -10,7 +10,7 @@ const password = process.argv[2]
 
 const url = `mongodb+srv://ethansbrown711:${password}@cluster0.hfdjdhj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
 
-mongoose.set("strictQuery", false)
+mongoose.set('strictQuery', false)
 
 mongoose.connect(url)
 
@@ -19,7 +19,7 @@ const personSchema = new mongoose.Schema({
   number: String,
 })
 
-personSchema.set("toJSON", {
+personSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -27,7 +27,7 @@ personSchema.set("toJSON", {
   },
 })
 
-const Person = mongoose.model("Person", personSchema)
+const Person = mongoose.model('Person', personSchema)
 
 const printAllPeople = () => {
   Person.find({}).then((result) => {
@@ -46,7 +46,7 @@ const saveToDb = () => {
     number: number,
   })
 
-  person.save().then((result) => {
+  person.save().then(() => {
     console.log(`added ${name} number ${number} to phonebook`)
     mongoose.connection.close()
   })
