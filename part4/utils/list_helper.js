@@ -1,4 +1,5 @@
 const lodash = require('lodash')
+const blog = require('../models/blog')
 
 const dummy = (blogs) => {
   return 1
@@ -31,9 +32,28 @@ const mostBlogs = (blogs) => {
   }
 }
 
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return null
+  }
+  const mapAuthorToTotalLikes = {}
+  blogs.forEach((blog) => {
+    mapAuthorToTotalLikes[blog.author] =
+      (mapAuthorToTotalLikes[blog.author] || 0) + blog.likes
+  })
+  const authorWithMostLikes = Object.keys(mapAuthorToTotalLikes).reduce(
+    (a, b) => (mapAuthorToTotalLikes[a] > mapAuthorToTotalLikes[b] ? a : b)
+  )
+  return {
+    author: authorWithMostLikes,
+    likes: mapAuthorToTotalLikes[authorWithMostLikes],
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 }
