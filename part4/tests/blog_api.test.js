@@ -94,6 +94,24 @@ test('delete on bad id fails', async () => {
   await api.delete('/api/blogs/badid').expect(500)
 })
 
+test('update succeeds', async () => {
+  const initialBlogs = await testHelper.getBlogsInDatabase()
+  const toUpdate = initialBlogs[0]
+  const updatedBlog = {
+    ...toUpdate,
+    title: 'updated_title',
+    url: 'updated_url',
+    likes: toUpdate.likes + 1,
+  }
+
+  const updated = await api
+    .put(`/api/blogs/${toUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+  assert.deepStrictEqual(updated.body, updatedBlog)
+  assert.strictEqual(updated.body.likes, toUpdate.likes + 1)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
