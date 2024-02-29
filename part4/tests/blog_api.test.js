@@ -78,6 +78,24 @@ test('likes missing defaults to 0', async () => {
   assert(newBlog.likes === 0)
 })
 
+test('title missing fails', async () => {
+  const blogMissingTitle = {
+    author: 'author_3',
+    url: 'url_3',
+  }
+
+  await api.post('/api/blogs').send(blogMissingTitle).expect(400)
+})
+
+test.only('url missing fails', async () => {
+  const blogMissingUrl = {
+    title: 'title_3',
+    author: 'author_3',
+  }
+
+  await api.post('/api/blogs').send(blogMissingUrl).expect(400)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
