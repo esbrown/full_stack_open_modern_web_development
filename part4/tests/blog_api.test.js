@@ -4,32 +4,18 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const testHelper = require('../utils/test_helper')
 
 const api = supertest(app)
 
-const initialBlogs = [
-  {
-    title: 'title_1',
-    author: 'author_1',
-    url: 'url_1',
-    likes: 10,
-  },
-  {
-    title: 'title_2',
-    author: 'author_2',
-    url: 'url_2',
-    likes: 20,
-  },
-]
-
 test('there are two blogs', async () => {
   const response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, initialBlogs.length)
+  assert.strictEqual(response.body.length, testHelper.initialBlogs.length)
 })
 
 test('verify "id" name', async () => {
-  const response = await api.get('/api/blogs')
-  response.body.forEach((blog) => {
+  const blogsInDb = await testHelper.getBlogsInDatabase()
+  blogsInDb.forEach((blog) => {
     assert('id' in blog)
     assert(!('_id' in blog))
   })
@@ -49,11 +35,10 @@ test('a valid blog can be added', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
+  const blogsAtEnd = await testHelper.getBlogsInDatabase()
+  assert.strictEqual(blogsAtEnd.length, testHelper.initialBlogs.length + 1)
 
-  assert.strictEqual(response.body.length, initialBlogs.length + 1)
-
-  const titles = response.body.map((blog) => blog.title)
+  const titles = blogsAtEnd.map((blog) => blog.title)
   assert(titles.includes('title_3'))
 })
 
@@ -70,11 +55,11 @@ test('likes missing defaults to 0', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
+  const blogsAtEnd = await testHelper.getBlogsInDatabase()
 
-  assert.strictEqual(response.body.length, initialBlogs.length + 1)
+  assert.strictEqual(blogsAtEnd.length, testHelper.initialBlogs.length + 1)
 
-  const newBlog = response.body.filter((blog) => blog.title === 'title_3')[0]
+  const newBlog = blogsAtEnd.filter((blog) => blog.title === 'title_3')[0]
   assert(newBlog.likes === 0)
 })
 
@@ -87,7 +72,7 @@ test('title missing fails', async () => {
   await api.post('/api/blogs').send(blogMissingTitle).expect(400)
 })
 
-test.only('url missing fails', async () => {
+test('url missing fails', async () => {
   const blogMissingUrl = {
     title: 'title_3',
     author: 'author_3',
@@ -102,8 +87,5 @@ after(async () => {
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  let blogObject = new Blog(initialBlogs[0])
-  await blogObject.save()
-  blogObject = new Blog(initialBlogs[1])
-  await blogObject.save()
+  await Blog.insertMany(testHelper.initialBlogs)
 })
