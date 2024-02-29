@@ -81,6 +81,19 @@ test('url missing fails', async () => {
   await api.post('/api/blogs').send(blogMissingUrl).expect(400)
 })
 
+test('delete succeeds', async () => {
+  const blogsInDb = await testHelper.getBlogsInDatabase()
+  const toDelete = blogsInDb[0]
+
+  await api.delete(`/api/blogs/${toDelete.id}`).expect(204)
+  const blogsAtEnd = await testHelper.getBlogsInDatabase()
+  assert.strictEqual(blogsAtEnd.length, testHelper.initialBlogs.length - 1)
+})
+
+test('delete on bad id fails', async () => {
+  await api.delete('/api/blogs/badid').expect(500)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
