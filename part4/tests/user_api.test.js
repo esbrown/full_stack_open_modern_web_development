@@ -60,4 +60,38 @@ describe('when there is initially one user in db', () => {
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
   })
+
+  test('user with short username is not created', async () => {
+    const usersAtStart = await testHelper.getUsersInDatabase()
+
+    const newUser = {
+      username: 'hi',
+      name: 'Superuser',
+      password: 'salainen',
+    }
+
+    const result = await api.post('/api/users').send(newUser).expect(400)
+    assert(result.body.error.includes('User validation failed'))
+
+    const usersAtEnd = await testHelper.getUsersInDatabase()
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  test('user with short password is not created', async () => {
+    const usersAtStart = await testHelper.getUsersInDatabase()
+
+    const newUser = {
+      username: 'test',
+      name: 'Superuser',
+      password: 'hi',
+    }
+
+    const result = await api.post('/api/users').send(newUser).expect(400)
+    assert(result.body.error.includes('password must be 3 or more characters'))
+
+    const usersAtEnd = await testHelper.getUsersInDatabase()
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
 })
