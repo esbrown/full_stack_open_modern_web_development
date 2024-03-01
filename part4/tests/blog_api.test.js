@@ -91,7 +91,7 @@ test('delete succeeds', async () => {
 })
 
 test('delete on bad id fails', async () => {
-  await api.delete('/api/blogs/badid').expect(500)
+  await api.delete('/api/blogs/badid').expect(400)
 })
 
 test('update succeeds', async () => {
