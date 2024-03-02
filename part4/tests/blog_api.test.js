@@ -178,6 +178,18 @@ describe('delete and update on real data', async () => {
     assert.deepStrictEqual(updated, updatedBlog)
     assert.strictEqual(updated.likes, toUpdate.likes + 1)
   })
+
+  test('adding a blog with no token fails with 401', async () => {
+    const newBlog = {
+      title: 'title_3',
+      author: 'author_3',
+      url: 'url_3',
+      likes: 30,
+    }
+
+    // use supertest(app) directly to purposely not add token
+    await supertest(app).post('/api/blogs').send(newBlog).expect(401)
+  })
 })
 
 after(async () => {
