@@ -1,14 +1,14 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const userExtractor = require('../utils/user_extractor')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
+blogsRouter.post('/', userExtractor, async (request, response) => {
   const body = request.body
-
   const user = request.user
 
   if (!body.title) {
@@ -34,12 +34,14 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
 
   const blogId = request.params.id
   const blog = await Blog.findById(blogId)
 
+  console.log('blog', blog)
+  console.log('user', user)
   if (blog.user.toString() !== user.id.toString()) {
     return response
       .status(401)

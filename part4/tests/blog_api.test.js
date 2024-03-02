@@ -2,11 +2,40 @@ const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
+const bcrypt = require('bcrypt')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
 const testHelper = require('../utils/test_helper')
 
 const api = supertest(app)
+
+let currToken = ''
+const userName = 'ethan'
+const pass = 'thisismypassword'
+
+beforeEach(async () => {
+  await User.deleteMany({})
+
+  await Blog.deleteMany({})
+  await Blog.insertMany(testHelper.initialBlogs)
+
+  const passHash = await bcrypt.hash(pass, 10)
+  const user = new User({
+    username: userName,
+    name: 'eth',
+    passwordHash: passHash,
+  })
+  await user.save()
+
+  const response = await api.post('/api/login/').send({
+    username: userName,
+    password: pass,
+  })
+
+  currToken = response.body.token
+})
 
 test('there are two blogs', async () => {
   const response = await api.get('/api/blogs')
@@ -31,6 +60,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${currToken}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -51,6 +81,7 @@ test('likes missing defaults to 0', async () => {
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${currToken}`)
     .send(blogMissingLikes)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -82,16 +113,36 @@ test('url missing fails', async () => {
 })
 
 test('delete succeeds', async () => {
+  await Blog.deleteMany({})
+  const user = await User.find({ username: userName })
+  const user_id = user[0].id
+
+  const blog = new Blog({
+    title: 'will_delete!',
+    author: 'author',
+    url: 'hello.com',
+    likes: 33,
+    user: user_id,
+  })
+  await blog.save()
+
   const blogsInDb = await testHelper.getBlogsInDatabase()
   const toDelete = blogsInDb[0]
 
-  await api.delete(`/api/blogs/${toDelete.id}`).expect(204)
+  await api
+    .delete(`/api/blogs/${toDelete.id}`)
+    .set('Authorization', `Bearer ${currToken}`)
+    .expect(204)
   const blogsAtEnd = await testHelper.getBlogsInDatabase()
-  assert.strictEqual(blogsAtEnd.length, testHelper.initialBlogs.length - 1)
+
+  assert.strictEqual(blogsAtEnd.length, blogsInDb.length - 1)
 })
 
 test('delete on bad id fails', async () => {
-  await api.delete('/api/blogs/badid').expect(400)
+  await api
+    .delete('/api/blogs/badid')
+    .set('Authorization', `Bearer ${currToken}`)
+    .expect(400)
 })
 
 test('update succeeds', async () => {
@@ -114,9 +165,4 @@ test('update succeeds', async () => {
 
 after(async () => {
   await mongoose.connection.close()
-})
-
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(testHelper.initialBlogs)
 })
