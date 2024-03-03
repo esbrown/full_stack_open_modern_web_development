@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import SuccessMessage from './components/SuccessMessage'
@@ -6,6 +6,7 @@ import ErrorMessage from './components/ErrorMessage'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const userLocalStorageKey = 'loggedInUser'
 
@@ -19,7 +20,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
-  const [blogFormVisible, setBlogFormVisible] = useState(false)
+
+  const blogFormRef = useRef()
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -85,7 +87,7 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      setBlogFormVisible(false)
+      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(response))
       console.log(response)
     } catch (exception) {
@@ -96,31 +98,20 @@ const App = () => {
     }
   }
 
-  const blogForm = () => {
-    const hideWhenVisible = { display: blogFormVisible ? 'none' : '' }
-    const showWhenVisible = { display: blogFormVisible ? '' : 'none' }
-
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setBlogFormVisible(true)}>New blog</button>
-        </div>
-        <div style={showWhenVisible}>
-          <h2>Create new</h2>
-          <BlogForm
-            title={title}
-            author={author}
-            url={url}
-            handleSetTitle={({ target }) => setTitle(target.value)}
-            handleSetAuthor={({ target }) => setAuthor(target.value)}
-            handleSetUrl={({ target }) => setUrl(target.value)}
-            handleBlogSubmit={handleBlogSubmit}
-          />
-          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
-        </div>
-      </div>
-    )
-  }
+  const blogForm = () => (
+    <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
+      <h2>Create new</h2>
+      <BlogForm
+        title={title}
+        author={author}
+        url={url}
+        handleSetTitle={({ target }) => setTitle(target.value)}
+        handleSetAuthor={({ target }) => setAuthor(target.value)}
+        handleSetUrl={({ target }) => setUrl(target.value)}
+        handleBlogSubmit={handleBlogSubmit}
+      />
+    </Togglable>
+  )
 
   return (
     <div>
