@@ -5,6 +5,7 @@ import SuccessMessage from './components/SuccessMessage'
 import ErrorMessage from './components/ErrorMessage'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import BlogForm from './components/BlogForm'
 
 const userLocalStorageKey = 'loggedInUser'
 
@@ -89,39 +90,6 @@ const App = () => {
     }
   }
 
-  const blogForm = () => (
-    <form onSubmit={handleBlogSubmit}>
-      <div>
-        title{' '}
-        <input
-          type='text'
-          value={title}
-          name='Title'
-          onChange={({ target }) => setTitle(target.value)}
-        />
-      </div>
-      <div>
-        author{' '}
-        <input
-          type='text'
-          value={author}
-          name='Author'
-          onChange={({ target }) => setAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url{' '}
-        <input
-          type='text'
-          value={url}
-          name='Url'
-          onChange={({ target }) => setUrl(target.value)}
-        />
-      </div>
-      <button type='submit'>create</button>
-    </form>
-  )
-
   return (
     <div>
       <SuccessMessage message={successMessage} />
@@ -146,7 +114,15 @@ const App = () => {
             <button onClick={handleLogout}>log out</button>
           </div>
           <h2>Create new</h2>
-          {blogForm()}
+          <BlogForm
+            title={title}
+            author={author}
+            url={url}
+            handleSetTitle={({ target }) => setTitle(target.value)}
+            handleSetAuthor={({ target }) => setAuthor(target.value)}
+            handleSetUrl={({ target }) => setUrl(target.value)}
+            handleBlogSubmit={handleBlogSubmit}
+          />
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
