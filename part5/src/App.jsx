@@ -107,6 +107,17 @@ const App = () => {
     }
   }
 
+  const handleDelete = async (blog) => {
+    try {
+      await blogService.remove(blog.id)
+      const updatedBlogs = blogs.filter((b) => b.id !== blog.id)
+      setBlogs(updatedBlogs)
+    } catch (exception) {
+      updateErrorMessage(`There was an issue deleting: ${exception.message}`)
+      console.log('error', exception)
+    }
+  }
+
   const blogForm = () => (
     <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
       <h2>Create new</h2>
@@ -142,7 +153,13 @@ const App = () => {
           {blogs
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
-              <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateLikes={updateLikes}
+                canDelete={blog.user.username === user.username}
+                handleDelete={handleDelete}
+              />
             ))}
         </div>
       )}
