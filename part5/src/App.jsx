@@ -101,8 +101,8 @@ const App = () => {
           <LoginForm
             username={username}
             password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
+            handleSetUsername={({ target }) => setUsername(target.value)}
+            handleSetPassword={({ target }) => setPassword(target.value)}
             handleLogin={handleLogin}
           />
         </div>
