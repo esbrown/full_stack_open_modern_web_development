@@ -19,6 +19,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [blogFormVisible, setBlogFormVisible] = useState(false)
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -81,6 +82,11 @@ const App = () => {
       }
       const response = await blogService.create(newBlog)
       updateSuccessMessage(`New blog "${title}" successfully created`)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      setBlogFormVisible(false)
+      setBlogs(blogs.concat(response))
       console.log(response)
     } catch (exception) {
       updateErrorMessage(
@@ -88,6 +94,32 @@ const App = () => {
       )
       console.log('error', exception)
     }
+  }
+
+  const blogForm = () => {
+    const hideWhenVisible = { display: blogFormVisible ? 'none' : '' }
+    const showWhenVisible = { display: blogFormVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogFormVisible(true)}>New blog</button>
+        </div>
+        <div style={showWhenVisible}>
+          <h2>Create new</h2>
+          <BlogForm
+            title={title}
+            author={author}
+            url={url}
+            handleSetTitle={({ target }) => setTitle(target.value)}
+            handleSetAuthor={({ target }) => setAuthor(target.value)}
+            handleSetUrl={({ target }) => setUrl(target.value)}
+            handleBlogSubmit={handleBlogSubmit}
+          />
+          <button onClick={() => setBlogFormVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -113,16 +145,8 @@ const App = () => {
             {user.name} logged-in{' '}
             <button onClick={handleLogout}>log out</button>
           </div>
-          <h2>Create new</h2>
-          <BlogForm
-            title={title}
-            author={author}
-            url={url}
-            handleSetTitle={({ target }) => setTitle(target.value)}
-            handleSetAuthor={({ target }) => setAuthor(target.value)}
-            handleSetUrl={({ target }) => setUrl(target.value)}
-            handleBlogSubmit={handleBlogSubmit}
-          />
+          <br />
+          {blogForm()}
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
