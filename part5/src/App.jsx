@@ -17,9 +17,6 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
 
   const blogFormRef = useRef()
 
@@ -74,19 +71,10 @@ const App = () => {
     }, 5000)
   }
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault()
+  const handleCreateBlog = async (newBlog) => {
     try {
-      const newBlog = {
-        title: title,
-        author: author,
-        url: url,
-      }
       const response = await blogService.create(newBlog)
-      updateSuccessMessage(`New blog "${title}" successfully created`)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
+      updateSuccessMessage(`New blog "${newBlog.title}" successfully created`)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(response))
       console.log(response)
@@ -101,15 +89,7 @@ const App = () => {
   const blogForm = () => (
     <Togglable buttonLabel={'New blog'} ref={blogFormRef}>
       <h2>Create new</h2>
-      <BlogForm
-        title={title}
-        author={author}
-        url={url}
-        handleSetTitle={({ target }) => setTitle(target.value)}
-        handleSetAuthor={({ target }) => setAuthor(target.value)}
-        handleSetUrl={({ target }) => setUrl(target.value)}
-        handleBlogSubmit={handleBlogSubmit}
-      />
+      <BlogForm handleCreateBlog={handleCreateBlog} />
     </Togglable>
   )
 
