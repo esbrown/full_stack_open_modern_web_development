@@ -14,7 +14,6 @@ const Blog = ({ blog }) => {
   const hideWhenVisible = { display: detailsVisible ? 'none' : '' }
   const showWhenVisible = { display: detailsVisible ? '' : 'none' }
 
-  console.log(blog)
   return (
     <div style={blogStyle}>
       <div style={hideWhenVisible}>

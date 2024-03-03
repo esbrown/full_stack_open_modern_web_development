@@ -74,6 +74,7 @@ const App = () => {
   const handleCreateBlog = async (newBlog) => {
     try {
       const response = await blogService.create(newBlog)
+      response.user = user
       updateSuccessMessage(`New blog "${newBlog.title}" successfully created`)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(response))
