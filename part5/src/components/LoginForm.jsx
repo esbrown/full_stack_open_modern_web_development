@@ -12,6 +12,7 @@ const LoginForm = ({
         type='text'
         value={username}
         name='Username'
+        data-testid='username'
         onChange={handleSetUsername}
       />
     </div>
@@ -21,6 +22,7 @@ const LoginForm = ({
         type='password'
         value={password}
         name='Password'
+        data-testid='password'
         onChange={handleSetPassword}
       />
     </div>
