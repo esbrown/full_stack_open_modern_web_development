@@ -92,5 +92,29 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'view' }).last().click()
       await expect(page.getByText('remove')).not.toBeVisible()
     })
+
+    test('sorted by like count', async ({ page }) => {
+      const buttons = await page.$$('button')
+
+      for (const button of buttons) {
+        const text = await button.innerText()
+        if (text.toLowerCase() === 'view') {
+          await button.click()
+        }
+      }
+
+      const textContent = await page.textContent('body')
+
+      const regex = /likes [0-9]*/g
+
+      // Get an array of all matches
+      const matches = textContent
+        .match(regex)
+        .map((match) => parseInt(match.replace('likes ', '')))
+      const isSorted = matches.every(
+        (value, index, array) => index === 0 || value <= array[index - 1]
+      )
+      expect(isSorted).toBeTruthy()
+    })
   })
 })
