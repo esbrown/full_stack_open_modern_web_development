@@ -28,6 +28,13 @@ describe('Blog app', () => {
         password: 'thisismypassword',
       },
     })
+    await request.post('http://localhost:3003/api/users', {
+      data: {
+        name: 'SuperUser',
+        username: 'root',
+        password: 'password',
+      },
+    })
 
     await page.goto('http://localhost:5173')
   })
@@ -53,47 +60,76 @@ describe('Blog app', () => {
     })
   })
 
+  const createNewBlog = async (page) => {
+    const testTitle = 'This is a new blog!'
+    await page.getByRole('button', { name: 'New blog' }).click()
+    await page.getByTestId('title-input').fill(testTitle)
+    await page.getByTestId('author-input').fill('author!')
+    await page.getByTestId('url-input').fill('url.com')
+    await page.getByRole('button', { name: 'create' }).click()
+    await expect(
+      page.getByText(`New blog "${testTitle}" successfully created`)
+    ).toBeVisible()
+  }
+
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       await loginSuccessfully(page)
     })
 
     test('a new blog can be created', async ({ page }) => {
-      const testTitle = 'This is a new blog!'
-      await page.getByRole('button', { name: 'New blog' }).click()
-      await page.getByTestId('title-input').fill(testTitle)
-      await page.getByTestId('author-input').fill('author!')
-      await page.getByTestId('url-input').fill('url.com')
-      await page.getByRole('button', { name: 'create' }).click()
-      await expect(
-        page.getByText(`New blog "${testTitle}" successfully created`)
-      ).toBeVisible()
+      await createNewBlog(page)
     })
 
-    test('like works', async ({ page }) => {
+    describe('with one blog', () => {
+      beforeEach(async ({ page }) => {
+        await createNewBlog(page)
+      })
+
+      test('like works', async ({ page }) => {
+        await page.getByRole('button', { name: 'view' }).first().click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await expect(page.getByText('Like count updated')).toBeVisible()
+      })
+
+      test('delete works', async ({ page }) => {
+        page.on('dialog', async (dialog) => {
+          await dialog.accept()
+        })
+        await page.getByRole('button', { name: 'view' }).last().click()
+        await page.getByRole('button', { name: 'remove' }).click()
+        await expect(page.getByText('Successfully deleted')).toBeVisible()
+      })
+
+      test("cannot delete other user's post", async ({ page }) => {
+        await page.getByRole('button', { name: 'log out' }).click()
+        await page.goto('http://localhost:5173')
+        await loginOtherUser(page)
+        await page.getByRole('button', { name: 'view' }).last().click()
+        await expect(page.getByText('remove')).not.toBeVisible()
+      })
+    })
+
+    const addBlogsAndLikes = async (page) => {
+      await createNewBlog(page)
+      await page.getByRole('button', { name: 'view' }).last().click()
+      await page.getByRole('button', { name: 'like' }).click()
+      await expect(page.getByText('Like count updated')).toBeVisible()
+      await page.getByRole('button', { name: 'hide' }).click()
+      await createNewBlog(page)
       await page.getByRole('button', { name: 'view' }).first().click()
       await page.getByRole('button', { name: 'like' }).click()
       await expect(page.getByText('Like count updated')).toBeVisible()
-    })
-
-    test('delete works', async ({ page }) => {
-      page.on('dialog', async (dialog) => {
-        await dialog.accept()
-      })
+      await page.getByRole('button', { name: 'hide' }).click()
+      await createNewBlog(page)
       await page.getByRole('button', { name: 'view' }).last().click()
-      await page.getByRole('button', { name: 'remove' }).click()
-      await expect(page.getByText('Successfully deleted')).toBeVisible()
-    })
-
-    test("cannot delete other user's post", async ({ page }) => {
-      await page.getByRole('button', { name: 'log out' }).click()
-      await page.goto('http://localhost:5173')
-      await loginOtherUser(page)
-      await page.getByRole('button', { name: 'view' }).last().click()
-      await expect(page.getByText('remove')).not.toBeVisible()
-    })
+      await page.getByRole('button', { name: 'like' }).click()
+      await expect(page.getByText('Like count updated')).toBeVisible()
+      await page.getByRole('button', { name: 'hide' }).click()
+    }
 
     test('sorted by like count', async ({ page }) => {
+      await addBlogsAndLikes(page)
       const buttons = await page.$$('button')
 
       for (const button of buttons) {
