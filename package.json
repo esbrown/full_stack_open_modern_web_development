@@ -1,0 +1,17 @@
+{
+  "name": "full_stack_open_modern_web_development",
+  "version": "1.0.0",
+  "description": "## [Part 0](./part0/)",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.25"
+  }
+}
