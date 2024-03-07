@@ -112,6 +112,7 @@ const App = () => {
       await blogService.remove(blog.id)
       const updatedBlogs = blogs.filter((b) => b.id !== blog.id)
       setBlogs(updatedBlogs)
+      updateSuccessMessage('Successfully deleted')
     } catch (exception) {
       updateErrorMessage(`There was an issue deleting: ${exception.message}`)
       console.log('error', exception)
