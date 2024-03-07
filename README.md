@@ -26,3 +26,8 @@
 ## [Part 4](./part4/)
 
 - [4](./part4)
+
+## [Part 5](./part5/)
+
+- [5](./part5)
+- [E2E testing](./tests/blog.spec.js)
