@@ -9,6 +9,15 @@ const loginSuccessfully = async (page) => {
   await expect(page.getByText('eth logged-in')).toBeVisible()
 }
 
+const loginOtherUser = async (page) => {
+  await page.getByTestId('username').fill('root')
+  await page.getByTestId('password').fill('password')
+
+  await page.getByRole('button', { name: 'login' }).click()
+
+  await expect(page.getByText('Superuser logged-in')).toBeVisible()
+}
+
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
     await request.post('http:localhost:3003/api/testing/reset')
@@ -74,6 +83,14 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'view' }).last().click()
       await page.getByRole('button', { name: 'remove' }).click()
       await expect(page.getByText('Successfully deleted')).toBeVisible()
+    })
+
+    test("cannot delete other user's post", async ({ page }) => {
+      await page.getByRole('button', { name: 'log out' }).click()
+      await page.goto('http://localhost:5173')
+      await loginOtherUser(page)
+      await page.getByRole('button', { name: 'view' }).last().click()
+      await expect(page.getByText('remove')).not.toBeVisible()
     })
   })
 })
