@@ -60,5 +60,11 @@ describe('Blog app', () => {
         page.getByText(`New blog "${testTitle}" successfully created`)
       ).toBeVisible()
     })
+
+    test('like works', async ({ page }) => {
+      await page.getByRole('button', { name: 'view' }).first().click()
+      await page.getByRole('button', { name: 'like' }).click()
+      await expect(page.getByText('Like count updated')).toBeVisible()
+    })
   })
 })
